@@ -4,18 +4,18 @@ import constants.Notifier;
 import constants.PaymentMethods;
 
 public class ReservationService {
-    private Notifier notifier = Notifier.EMAIL; //default Notifier
+    private Notifier notifier = Notifier.EMAIL; // default Notifier
     private PaymentProcessor paymentProcessor = new PaymentProcessor();
 
-    public void makeReservation(Reservation res, PaymentMethods paymentType, Notifier notifier){
+    public void makeReservation(Reservation res, PaymentMethods paymentType, Notifier notifier) {
         System.out.println("Processing reservation for " + res.customer.name);
 
-        if(res.customer.city.equals("Paris")){
+        if (res.customer.city.equals("Paris")) {
             System.out.println("Apply city discount for Paris!");
             res.room.price *= 0.9;
         }
 
-        switch (paymentType){
+        switch (paymentType) {
             case CARD:
                 paymentProcessor.payByCard(res.totalPrice());
                 break;
@@ -33,13 +33,17 @@ public class ReservationService {
         System.out.println("Total: " + res.totalPrice());
         System.out.println("-------------------");
 
-       switch (this.notifier){
-           case EMAIL :
-           EmailSender emailSender = new EmailSender();
-           emailSender.sendEmail(res.customer.email, "Your reservation confirmed!");
-           break;
-           default:
-               System.out.println("There is no Message Provider");
-       }
+        switch (this.notifier) {
+            case EMAIL:
+                EmailSender emailSender = new EmailSender();
+                emailSender.sendMessage(res.customer.email, "Your reservation confirmed!");
+                break;
+            case SMS:
+                SmsSender smsSender = new SmsSender();
+                smsSender.sendMessage(res.customer.mobile, "Your reservation confirmed!");
+                break;
+            default:
+                System.out.println("There is no Message Provider");
+        }
     }
 }
